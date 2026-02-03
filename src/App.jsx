@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiMoon, FiSun, FiMail, FiPhone, FiGithub, FiLinkedin, FiChevronDown, FiMenu } from "react-icons/fi";
+import { FiMoon, FiSun, FiMail, FiPhone, FiGithub, FiLinkedin, FiChevronDown, FiMenu, FiExternalLink, FiAward } from "react-icons/fi";
 
 // Single-file React portfolio for Ashish Kumar
 // Usage: replace src/App.jsx (or src/main.jsx component) with this file's default export
@@ -16,55 +16,77 @@ const social = {
 const experiences = [
   {
     company: "Hughes Systique Pvt. Ltd.",
-    role: "Associate Software Engineer",
-    date: "Dec 2024 – Present",
+    role: "Software Engineer (Associate)",
+    date: "January 2024 – Present",
+    location: "Gurugram, Haryana",
     bullets: [
-      "Engineered and deployed an AI-assistant for a client’s full-stack web app.",
-      "Fine-tuned LLMs, improving model accuracy by 30%.",
-      "Built semantic search service using embeddings.",
-      "Designed chat UI with real-time API integration, improving support efficiency by 40%.",
+      "Developed and migrated a production-grade Next.js application, improving performance, routing, and maintainability.",
+      "Engineered frontend features using Next.js and JavaScript to enhance user experience and platform performance.",
+      "Designed responsive UI components with real-time API integration, improving customer support efficiency by 40%.",
+      "Optimized a Vue.js + Node.js application via Vuex tuning and API debouncing, reducing latency by 60%.",
+      "Built a reusable Vuetify component library, standardizing UI and cutting dashboard development time by 20%.",
+      "Applied Java Full Stack skills (Java, Spring Boot, SQL, Docker) to build MERN-based applications using React and Node.js."
     ],
   },
   {
-    company: "Hughes Systique Pvt. Ltd.",
-    role: "Associate Software Engineer Trainee",
-    date: "Jan 2024 – Dec 2024",
+    company: "HighRadius",
+    role: "Product and Engineering Intern",
+    date: "May 2023 – June 2023",
+    location: "Bhubaneswar, Odisha",
     bullets: [
-      "Optimized Vue.js + Node.js app, reducing latency by 60%.",
-      "Created a reusable Vuetify component library to speed up development by 20%.",
-      "Applied full-stack training by crafting a MERN-based product.",
+      "Designed features for a B2B AI-enabled Fintech platform, delivering 100% of tasks in a 6-week sprint.",
+      "Built ML pipelines for 10K+ financial records, achieving 85% accuracy in payment prediction.",
+      "Translated requirements into scalable React components and REST APIs, cutting delivery time by 25%."
     ],
   },
 ];
 
 const projects = [
   {
+    title: "ArchSync",
+    date: "December 2025",
+    link: "https://archsync.netlify.app",
+    githubLink: "https://github.com/ashish15x/ArchSync",
+    desc: "AI-driven platform to capture and analyze team architectural knowledge using LLM embeddings and vector search, reducing misalignment by 30%. Implemented semantic search and consensus analysis using Google Gemini embeddings (768-dim), pgvector, and cosine similarity, processing 1,000+ queries with real-time insights. Developed full-stack system using Next.js, TypeScript, Tailwind CSS, and Supabase PostgreSQL; won internal company hackathon among 10 teams.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Google Gemini", "pgvector"],
+  },
+  {
     title: "Sneakhub",
-    date: "Mar 2024",
-    desc: "Full-stack e-commerce app with responsive React frontend and Spring Boot backend. Achieved 90+ Lighthouse performance.",
-    tags: ["React", "Spring Boot", "SQL"],
+    date: "March 2024 – April 2024",
+    desc: "Full-stack e-commerce web application with responsive React.js frontend, achieving a 90+ Lighthouse performance score. Constructed robust RESTful backend APIs using Spring Boot for reliable data handling. Managed efficient SQL database operations, maintaining data integrity and optimizing retrieval. Integrated core e-commerce functionalities, including product browsing, cart, and order processing.",
+    tags: ["React.js", "Spring Boot", "SQL", "RESTful APIs"],
   },
   {
-    title: "AI Enabled Fintech Invoice Management",
-    date: "May 2023",
-    desc: "AI-enabled B2B invoice prediction app using ML, Java, and SQL to handle 10k+ records.",
-    tags: ["ML", "Java", "SQL"],
-  },
-  {
-    title: "House Price Prediction",
-    date: "Feb 2023",
-    desc: "Machine learning model to forecast house prices with ~95% accuracy.",
-    tags: ["Python", "ML", "Data"],
+    title: "AI Enabled Fintech B2B Invoice Management Application",
+    date: "May 2023 – June 2023",
+    desc: "Architected and implemented a full-stack AI-enabled Fintech B2B Invoice Management application using machine learning models to accurately predict order amounts, improving forecasting capabilities for business transactions. Made robust backend using Java and SQL for data management, handling 10,000+ invoice records.",
+    tags: ["ML", "Java", "SQL", "React"],
   },
 ];
 
 export default function Portfolio() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => {
+    // Check localStorage first, then system preference
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('darkMode');
+      if (saved !== null) return saved === 'true';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (dark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    const root = document.documentElement;
+    if (dark) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    // Save to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('darkMode', dark.toString());
+    }
   }, [dark]);
 
   return (
@@ -82,23 +104,11 @@ export default function Portfolio() {
             <a href="#projects" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">Projects</a>
             <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">Contact</a>
 
-            <button
-              onClick={() => setDark((s) => !s)}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Toggle dark mode"
-            >
-              {dark ? <FiSun size={18} /> : <FiMoon size={18} />}
-            </button>
+           
           </nav>
 
           <div className="md:hidden flex items-center gap-3">
-            <button
-              onClick={() => setDark((s) => !s)}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Toggle dark mode"
-            >
-              {dark ? <FiSun size={18} /> : <FiMoon size={18} />}
-            </button>
+      
             <button
               onClick={() => setMobileMenuOpen((s) => !s)}
               className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -119,7 +129,7 @@ export default function Portfolio() {
           closed: { opacity: 0, height: 0 },
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="md:hidden bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 overflow-hidden shadow-md absolute w-full top-[68px] z-40"
+        className="md:hidden bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 overflow-hidden shadow-md fixed w-full top-[68px] z-50"
       >
         <div className="flex flex-col items-start px-6 py-4 space-y-4">
           <a href="#about" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-lg font-medium w-full" onClick={() => setMobileMenuOpen(false)}>About</a>
@@ -142,7 +152,7 @@ export default function Portfolio() {
               Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Ashish Kumar</span>.
             </h2>
             <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
-            Full-stack developer with experience in machine learning, passionate about building scalable applications and collaborating on impactful projects. Let’s connect!
+Full-Stack Software Engineer specializing in scalable web apps and AI-powered systems. I build production-ready products using Next.js, React, Vue, Java, and modern cloud technologies. Let’s connect!
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center md:justify-start gap-4">
@@ -191,8 +201,8 @@ export default function Portfolio() {
             className="flex justify-center md:justify-end order-1 md:order-2"
           >
             {/* Animated Avatar Placeholder */}
-            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-700 dark:to-purple-800 flex items-center justify-center overflow-hidden shadow-2xl border-4 border-white dark:border-gray-900 mr-20">
-              <img src="https://media.licdn.com/dms/image/v2/D4D03AQGVjAYXjCJeQg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705389296811?e=1760572800&v=beta&t=jOqQMf_SaVoC9GZ1V54d6wsQe8o-vu5PxIRx6zJD0gw" alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
+            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-700 dark:to-purple-800 flex items-center justify-center overflow-hidden shadow-2xl border-4 border-white dark:border-gray-900 md:mr-20">
+              <img src="./src/assets/dp.jpeg" alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
             </div>
           </motion.div>
         </section>
@@ -227,7 +237,7 @@ export default function Portfolio() {
             <ul className="grid grid-cols-1 gap-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Education:</strong>
-    <span>B.E. Computer Science, KIIT (2020–2024) — CGPA 8.93</span>
+    <span>Bachelor Of Engineering in Computer Science, Kalinga Institute Of Industrial Technology (2020–2024) — CGPA 8.93</span>
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Languages:</strong>
@@ -235,11 +245,11 @@ export default function Portfolio() {
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Tech Stack:</strong>
-    <span>React.js, Vue.js, Angular, Node.js, Spring Boot, MongoDB, Docker, AWS</span>
+    <span>Next.js, React.js, Vue.js, Node.js, Spring Boot, MongoDB, Git, Docker, AWS, Cloud Computing, Visual Studio</span>
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Certifications:</strong>
-    <span>Google Cloud Digital Leader; AWS Academy Certification</span>
+    <span>Google Cloud Digital Leader Certification; AWS Academy Certification</span>
   </li>
 </ul>
 
@@ -268,7 +278,7 @@ export default function Portfolio() {
               viewport={{ once: true }}
             >
               <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Frameworks & Tools</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">React.js, Node.js, Spring Boot, Next.js, Docker, Git, RESTful APIs, Tailwind CSS</p>
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Next.js, React.js, Vue.js, Node.js, Spring Boot, MongoDB, Git, Docker, AWS, Cloud Computing, Tailwind CSS, RESTful APIs, Vuetify, Vuex</p>
             </motion.div>
             <motion.div
               className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
@@ -278,7 +288,7 @@ export default function Portfolio() {
               viewport={{ once: true }}
             >
               <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Cloud & AI</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">AWS, GCP (Google Cloud Digital Leader), Azure, Kubernetes, LLMs, Machine Learning, Data Science</p>
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">AWS, GCP (Google Cloud Digital Leader), Azure, Kubernetes, LLMs, Machine Learning, Data Scienc, GenAI</p>
             </motion.div>
           </div>
         </section>
@@ -320,8 +330,36 @@ export default function Portfolio() {
                 viewport={{ once: true }}
               >
                 <div className="flex flex-col items-start mb-4 flex-grow">
-                  <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-2">{p.title}</h4>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{p.date}</span>
+                  <div className="flex justify-between items-start w-full">
+                    <div>
+                      <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-2">{p.title}</h4>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{p.date}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      {p.githubLink && (
+                        <a
+                          href={p.githubLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                          aria-label="GitHub Repository"
+                        >
+                          <FiGithub size={18} />
+                        </a>
+                      )}
+                      {p.link && (
+                        <a
+                          href={p.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                          aria-label="Live Project"
+                        >
+                          <FiExternalLink size={18} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6 flex-grow">{p.desc}</p>
                 <div className="mt-auto flex flex-wrap gap-2">
@@ -363,6 +401,7 @@ export default function Portfolio() {
                   <div>
                     <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">{exp.role}</h4>
                     <p className="text-md text-gray-600 dark:text-gray-400">{exp.company}</p>
+                    {exp.location && <p className="text-sm text-gray-500 dark:text-gray-500">{exp.location}</p>}
                   </div>
                   <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">{exp.date}</span>
                 </div>
@@ -395,8 +434,16 @@ export default function Portfolio() {
               viewport={{ once: true }}
             >
               <img src="https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg" alt="Google Cloud" className="w-16 h-16 mb-4" />
-              <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">Google Cloud Digital Leader</h4>
-              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: May 2024</p>
+              <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">Google Cloud Digital Leader Certification</h4>
+              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: May 2024 – June 2024</p>
+              <a
+                href="https://media.licdn.com/dms/document/media/v2/D4D2DAQE_uoDfpmp_Rg/profile-treasury-document-pdf-analyzed/B4DZd6MjheHMAg-/0/1750101807865?e=1770854400&v=beta&t=SLt4Sbdb9y93AUuhGicdBqxb7JOeHXXJGKqMeBBfDh4"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
+              >
+                <FiAward size={16} /> View Certificate
+              </a>
             </motion.div>
             <motion.div
               className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
@@ -407,7 +454,15 @@ export default function Portfolio() {
             >
               <img src="https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg" alt="AWS" className="w-16 h-16 mb-4" />
               <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">AWS Academy Certification</h4>
-              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: April 2023</p>
+              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: April 2023 – May 2023</p>
+              <a
+                href="https://media.licdn.com/dms/document/media/v2/D4D2DAQH_bTB3YlQo4w/profile-treasury-document-pdf-analyzed/profile-treasury-document-pdf-analyzed/0/1707231393450?e=1770854400&v=beta&t=talqzoYLeVgADCMDYJy8Sc2Eva8UJ6TOZ_wBfbYKssc"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
+              >
+                <FiAward size={16} /> View Certificate
+              </a>
             </motion.div>
           </div>
         </section>
