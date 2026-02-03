@@ -202,7 +202,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
           >
             {/* Animated Avatar Placeholder */}
             <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-700 dark:to-purple-800 flex items-center justify-center overflow-hidden shadow-2xl border-4 border-white dark:border-gray-900 md:mr-20">
-              <img src="./src/assets/dp.jpeg" alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
+              <img src="https://media.licdn.com/dms/image/v2/D4D03AQGVjAYXjCJeQg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705389296811?e=1771459200&v=beta&t=aj8oNhxifiyYjrOrsxpsTOnRtusRwHtc6-WAwAFR0Wk" alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
             </div>
           </motion.div>
         </section>
