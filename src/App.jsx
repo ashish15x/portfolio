@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiMoon, FiSun, FiMail, FiPhone, FiGithub, FiLinkedin, FiChevronDown, FiMenu, FiExternalLink, FiAward } from "react-icons/fi";
-
+import profileImg from './assets/dp.jpeg';
 // Single-file React portfolio for Ashish Kumar
 // Usage: replace src/App.jsx (or src/main.jsx component) with this file's default export
 
@@ -16,28 +16,28 @@ const social = {
 const experiences = [
   {
     company: "Hughes Systique Pvt. Ltd.",
-    role: "Software Engineer (Associate)",
+    role: "Fullstack AI Engineer",
     date: "January 2024 – Present",
     location: "Gurugram, Haryana",
-    bullets: [
-      "Developed and migrated a production-grade Next.js application, improving performance, routing, and maintainability.",
-      "Engineered frontend features using Next.js and JavaScript to enhance user experience and platform performance.",
-      "Designed responsive UI components with real-time API integration, improving customer support efficiency by 40%.",
-      "Optimized a Vue.js + Node.js application via Vuex tuning and API debouncing, reducing latency by 60%.",
-      "Built a reusable Vuetify component library, standardizing UI and cutting dashboard development time by 20%.",
-      "Applied Java Full Stack skills (Java, Spring Boot, SQL, Docker) to build MERN-based applications using React and Node.js."
-    ],
+ bullets: [
+  "Built full-stack apps with Next.js, React, Node.js, and PostgreSQL for scalable SaaS workflows.",
+  "Deployed GenAI RAG pipelines for semantic search, improving retrieval efficiency.",
+  "Optimized RESTful APIs and backend services to significantly reduce response latency.",
+  "Developed responsive Next.js/React frontends with SSR to improve user engagement and reduce manual effort.",
+  "Engineered embedding pipelines and cosine similarity ranking for high-accuracy semantic search.",
+  "Awarded Best Presenter and Innovation Catalyst at the company hackathon for AI-driven solutions."
+],
   },
   {
     company: "HighRadius",
     role: "Product and Engineering Intern",
     date: "May 2023 – June 2023",
     location: "Bhubaneswar, Odisha",
-    bullets: [
-      "Designed features for a B2B AI-enabled Fintech platform, delivering 100% of tasks in a 6-week sprint.",
-      "Built ML pipelines for 10K+ financial records, achieving 85% accuracy in payment prediction.",
-      "Translated requirements into scalable React components and REST APIs, cutting delivery time by 25%."
-    ],
+   bullets: [
+  "Designed features for a B2B AI-enabled Fintech platform, successfully delivering all tasks within sprint timelines.",
+  "Built machine learning pipelines on financial records for automated payment prediction.",
+  "Translated product requirements into scalable React components and REST APIs to accelerate feature delivery."
+],
   },
 ];
 
@@ -152,7 +152,7 @@ export default function Portfolio() {
               Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Ashish Kumar</span>.
             </h2>
             <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
-Full-Stack Software Engineer specializing in scalable web apps and AI-powered systems. I build production-ready products using Next.js, React, Vue, Java, and modern cloud technologies. Let’s connect!
+Full-Stack AI Engineer specializing in scalable web apps and AI-powered systems. I build production-ready products using Next.js, Python, PostgreSQL, and modern cloud technologies—leveraging RAG and LLMs to create intelligent automation. Let’s connect!
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center md:justify-start gap-4">
@@ -174,14 +174,14 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
                 <FiGithub size={20} /> GitHub
               </a>
 
-              <a
+              {/* <a
                 href={social.leetcode}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md font-medium"
               >
                 LeetCode
-              </a>
+              </a> */}
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-6 text-base text-gray-600 dark:text-gray-400">
@@ -202,7 +202,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
           >
             {/* Animated Avatar Placeholder */}
             <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-700 dark:to-purple-800 flex items-center justify-center overflow-hidden shadow-2xl border-4 border-white dark:border-gray-900 md:mr-20">
-              <img src="https://media.licdn.com/dms/image/v2/D4D03AQGVjAYXjCJeQg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705389296811?e=1771459200&v=beta&t=aj8oNhxifiyYjrOrsxpsTOnRtusRwHtc6-WAwAFR0Wk" alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
+              <img src={profileImg} alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
             </div>
           </motion.div>
         </section>
@@ -223,7 +223,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-           I build full-stack solutions that combine robust backends with intuitive, responsive frontends. My experience spans JavaScript frameworks, scalable APIs, relational databases, and machine learning integrations. In my current role, I’m developing a production-grade application with Vue.js, Node.js, and PostgreSQL, where I engineered a machine learning–powered chatbot to deliver smarter, real-time interactions. Beyond coding, I focus on optimizing performance, ensuring reliability, and exploring how AI can enhance modern web applications.
+           I build full-stack AI solutions that combine robust backends with intuitive, responsive frontends. With 3+ years of experience, my background spans modern web frameworks, scalable APIs, relational databases, and generative AI integrations. In my current work, I develop production-grade applications using Next.js, Python, and PostgreSQL, where I design Retrieval-Augmented Generation (RAG) pipelines using LLMs, embeddings, and vector databases to power intelligent search and automation. Beyond coding, I focus on optimizing performance, ensuring system reliability, and exploring how AI can enhance modern web applications.
           </motion.p>
 
           <motion.div
@@ -241,11 +241,15 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Languages:</strong>
-    <span>C++, Java, Python, JavaScript, SQL</span>
+    <span>C++, Java, Python,TypeScript, JavaScript, SQL</span>
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Tech Stack:</strong>
-    <span>Next.js, React.js, Vue.js, Node.js, Spring Boot, MongoDB, Git, Docker, AWS, Cloud Computing, Visual Studio</span>
+    <span>Next.js, React.js, Vue.js, Node.js, Spring Boot, PostgreSQL, MongoDB, AWS, GCP, Docker, Kubernetes</span>
+  </li>
+  <li className="flex items-start">
+    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">AI & LLM:</strong>
+    <span>RAG, LLMs, Guardrails, LangChain, LangGraph, LlamaIndex, Vector Databases, Prompt Engineering, Embeddings</span>
   </li>
   <li className="flex items-start">
     <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Certifications:</strong>
@@ -268,7 +272,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               viewport={{ once: true }}
             >
               <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Languages</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">C++, Java, Python, JavaScript, SQL, TypeScript</p>
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Python, Java, TypeScript, JavaScript, C++, SQL</p>
             </motion.div>
             <motion.div
               className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
@@ -278,7 +282,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               viewport={{ once: true }}
             >
               <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Frameworks & Tools</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Next.js, React.js, Vue.js, Node.js, Spring Boot, MongoDB, Git, Docker, AWS, Cloud Computing, Tailwind CSS, RESTful APIs, Vuetify, Vuex</p>
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Next.js, React.js, Vue.js, Node.js, Express.js, Spring Boot, PostgreSQL, MongoDB, Kafka, Tailwind CSS, RESTful APIs, Docker, Git</p>
             </motion.div>
             <motion.div
               className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
@@ -288,7 +292,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               viewport={{ once: true }}
             >
               <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Cloud & AI</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">AWS, GCP (Google Cloud Digital Leader), Azure, Kubernetes, LLMs, Machine Learning, Data Scienc, GenAI</p>
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">AWS, GCP, Kubernetes, LLMs, RAG, LangChain, LangGraph, LlamaIndex, Vector Databases, Guardrails, Embeddings, Semantic Search</p>
             </motion.div>
           </div>
         </section>
@@ -437,7 +441,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">Google Cloud Digital Leader Certification</h4>
               <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: May 2024 – June 2024</p>
               <a
-                href="https://media.licdn.com/dms/document/media/v2/D4D2DAQE_uoDfpmp_Rg/profile-treasury-document-pdf-analyzed/B4DZd6MjheHMAg-/0/1750101807865?e=1770854400&v=beta&t=SLt4Sbdb9y93AUuhGicdBqxb7JOeHXXJGKqMeBBfDh4"
+                href="https://drive.google.com/file/d/1SDxkXgPB5hisN_bCIzsLCSK7ckw6Y2vS/view?usp=sharing"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
@@ -456,7 +460,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">AWS Academy Certification</h4>
               <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: April 2023 – May 2023</p>
               <a
-                href="https://media.licdn.com/dms/document/media/v2/D4D2DAQH_bTB3YlQo4w/profile-treasury-document-pdf-analyzed/profile-treasury-document-pdf-analyzed/0/1707231393450?e=1770854400&v=beta&t=talqzoYLeVgADCMDYJy8Sc2Eva8UJ6TOZ_wBfbYKssc"
+                href="https://drive.google.com/file/d/1kQSfnep12pAziJgpYvoRb5S1CBidZxP8/view?usp=sharing"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
@@ -494,7 +498,7 @@ Full-Stack Software Engineer specializing in scalable web apps and AI-powered sy
               <div className="mt-8 flex gap-5">
                 <a href={social.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><FiGithub size={28} /></a>
                 <a href={social.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><FiLinkedin size={28} /></a>
-                <a href={social.leetcode} target="_blank" rel="noreferrer" aria-label="LeetCode" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">LC</a>
+                {/* <a href={social.leetcode} target="_blank" rel="noreferrer" aria-label="LeetCode" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">LC</a> */}
               </div>
             </motion.div>
 
