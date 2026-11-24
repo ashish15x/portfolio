@@ -28,6 +28,15 @@ body {
   overflow-x: hidden;
 }
 
+@media (pointer: fine) {
+  html,
+  body,
+  html *,
+  body * {
+    cursor: none !important;
+  }
+}
+
 ::selection {
   background: #f7c8bb;
   color: #2c221c;

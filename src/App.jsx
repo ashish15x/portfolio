@@ -30,25 +30,25 @@ const experiences = [
     role: "Fullstack AI Engineer",
     date: "January 2024 – Present",
     location: "Gurugram, Haryana",
-    bullets: [
-      "Built full-stack apps with Next.js, React, Node.js, and PostgreSQL for scalable SaaS workflows.",
-      "Deployed GenAI RAG pipelines for semantic search, improving retrieval efficiency.",
-      "Optimized RESTful APIs and backend services to significantly reduce response latency.",
-      "Developed responsive Next.js/React frontends with SSR to improve user engagement and reduce manual effort.",
-      "Engineered embedding pipelines and cosine similarity ranking for high-accuracy semantic search.",
+ bullets: [
+  "Built full-stack apps with Next.js, React, Node.js, and PostgreSQL for scalable SaaS workflows.",
+  "Deployed GenAI RAG pipelines for semantic search, improving retrieval efficiency.",
+  "Optimized RESTful APIs and backend services to significantly reduce response latency.",
+  "Developed responsive Next.js/React frontends with SSR to improve user engagement and reduce manual effort.",
+  "Engineered embedding pipelines and cosine similarity ranking for high-accuracy semantic search.",
       "Awarded Best Presenter and Innovation Catalyst at the company hackathon for AI-driven solutions.",
-    ],
+],
   },
   {
     company: "HighRadius",
     role: "Product and Engineering Intern",
     date: "May 2023 – June 2023",
     location: "Bhubaneswar, Odisha",
-    bullets: [
-      "Designed features for a B2B AI-enabled Fintech platform, successfully delivering all tasks within sprint timelines.",
-      "Built machine learning pipelines on financial records for automated payment prediction.",
+   bullets: [
+  "Designed features for a B2B AI-enabled Fintech platform, successfully delivering all tasks within sprint timelines.",
+  "Built machine learning pipelines on financial records for automated payment prediction.",
       "Translated product requirements into scalable React components and REST APIs to accelerate feature delivery.",
-    ],
+],
   },
 ];
 
@@ -238,7 +238,7 @@ export default function Portfolio() {
                   {item.label}
                 </a>
               ))}
-            </nav>
+          </nav>
             <div className="flex items-center gap-2">
               <Magnetic>
                 <a
@@ -248,13 +248,13 @@ export default function Portfolio() {
                   Let’s talk
                 </a>
               </Magnetic>
-              <button
+            <button
                 className="grid h-10 w-10 place-items-center rounded-full bg-[#fff1e8] text-[#2c221c] md:hidden"
                 onClick={() => setMenuOpen((s) => !s)}
                 aria-label="Toggle menu"
               >
                 {menuOpen ? <FiX size={18} /> : <FiMenu size={18} />}
-              </button>
+            </button>
             </div>
           </div>
         </div>
@@ -368,13 +368,6 @@ export default function Portfolio() {
             >
               Next.js · PostgreSQL
             </motion.div>
-            <motion.div
-              className="absolute right-8 -top-4 rounded-full bg-[#e0a03a] px-3 py-1.5 text-xs font-semibold text-[#2c221c] shadow"
-              animate={{ rotate: [ -4, 4, -4 ] }}
-              transition={{ duration: 3.4, repeat: Infinity }}
-            >
-              Hackathon winner
-            </motion.div>
           </motion.div>
         </section>
 
@@ -398,11 +391,11 @@ export default function Portfolio() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+            viewport={{ once: true }}
               className="text-lg leading-relaxed text-[#6d5f56]"
-            >
-              I build full-stack AI solutions that combine robust backends with intuitive, responsive frontends. With 3+ years of experience, my background spans modern web frameworks, scalable APIs, relational databases, and generative AI integrations. In my current work, I develop production-grade applications using Next.js, Python, and PostgreSQL, where I design Retrieval-Augmented Generation (RAG) pipelines using LLMs, embeddings, and vector databases to power intelligent search and automation. Beyond coding, I focus on optimizing performance, ensuring system reliability, and exploring how AI can enhance modern web applications.
-            </motion.p>
+          >
+           I build full-stack AI solutions that combine robust backends with intuitive, responsive frontends. With 3+ years of experience, my background spans modern web frameworks, scalable APIs, relational databases, and generative AI integrations. In my current work, I develop production-grade applications using Next.js, Python, and PostgreSQL, where I design Retrieval-Augmented Generation (RAG) pipelines using LLMs, embeddings, and vector databases to power intelligent search and automation. Beyond coding, I focus on optimizing performance, ensuring system reliability, and exploring how AI can enhance modern web applications.
+          </motion.p>
             <div className="grid grid-cols-2 gap-3">
               {[
                 ["3+", "Years building"],
@@ -450,11 +443,11 @@ export default function Portfolio() {
           <h2 className="font-display mb-10 text-4xl font-semibold tracking-tight sm:text-5xl">A toolkit for shipping AI products.</h2>
           <div className="grid gap-5 md:grid-cols-3">
             {skillGroups.map((group, i) => (
-              <motion.div
+            <motion.div
                 key={group.title}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+              viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -8 }}
                 className={`${group.tone} shine rounded-[2rem] p-7 shadow-[0_16px_40px_rgba(44,34,28,0.06)]`}
@@ -467,7 +460,7 @@ export default function Portfolio() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+            </motion.div>
             ))}
           </div>
         </section>
@@ -481,7 +474,7 @@ export default function Portfolio() {
                 key={exp.company}
                 initial={{ opacity: 0, x: -18 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+              viewport={{ once: true }}
                 transition={{ delay: index * 0.12 }}
                 className="relative pl-10 md:pl-12"
               >
@@ -533,21 +526,21 @@ export default function Portfolio() {
                 className={`shine rounded-[2rem] bg-gradient-to-br ${p.accent} p-7 shadow-[0_18px_45px_rgba(44,34,28,0.07)] ${index === 0 ? "lg:col-span-2" : ""}`}
               >
                 <div className="flex items-start justify-between gap-4">
-                  <div>
+                    <div>
                     <p className="text-sm text-[#8a7468]">{p.date}</p>
                     <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl">{p.title}</h3>
-                  </div>
-                  <div className="flex gap-2">
-                    {p.githubLink && (
+                    </div>
+                    <div className="flex gap-2">
+                      {p.githubLink && (
                       <a href={p.githubLink} target="_blank" rel="noreferrer" className="grid h-10 w-10 place-items-center rounded-full bg-white/80" aria-label="GitHub">
                         <FiGithub />
-                      </a>
-                    )}
-                    {p.link && (
+                        </a>
+                      )}
+                      {p.link && (
                       <a href={p.link} target="_blank" rel="noreferrer" className="grid h-10 w-10 place-items-center rounded-full bg-[#2c221c] text-white" aria-label="Live project">
                         <FiExternalLink />
-                      </a>
-                    )}
+                        </a>
+                      )}
                   </div>
                 </div>
                 <p className={`mt-4 leading-relaxed text-[#6d5f56] ${index === 0 ? "max-w-3xl" : ""}`}>{p.desc}</p>
@@ -595,7 +588,7 @@ export default function Portfolio() {
                 className={`${c.tone} flex items-center gap-5 rounded-[1.8rem] p-6 shadow-[0_16px_40px_rgba(44,34,28,0.06)]`}
               >
                 <img src={c.logo} alt="" className="h-14 w-14" />
-                <div>
+                  <div>
                   <h3 className="font-display text-xl font-semibold">{c.title}</h3>
                   <p className="mt-1 text-sm text-[#6d5f56]">{c.date}</p>
                   <p className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[#e25c3b]">
@@ -648,7 +641,7 @@ export default function Portfolio() {
               <Magnetic>
                 <button className="w-full rounded-full bg-[#e25c3b] px-6 py-4 text-lg font-semibold text-white transition hover:bg-[#cc4d2f]" type="submit">
                   Send message
-                </button>
+              </button>
               </Magnetic>
             </motion.form>
           </div>
