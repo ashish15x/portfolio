@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { FiMoon, FiSun, FiMail, FiPhone, FiGithub, FiLinkedin, FiChevronDown, FiMenu, FiExternalLink, FiAward } from "react-icons/fi";
-import profileImg from './assets/dp.jpeg';
-// Single-file React portfolio for Ashish Kumar
-// Usage: replace src/App.jsx (or src/main.jsx component) with this file's default export
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import {
+  FiAward,
+  FiArrowUpRight,
+  FiExternalLink,
+  FiGithub,
+  FiLinkedin,
+  FiMail,
+  FiMapPin,
+  FiMenu,
+  FiPhone,
+  FiX,
+} from "react-icons/fi";
+import profileImg from "./assets/dp.jpeg";
 
 const social = {
   linkedin: "https://www.linkedin.com/in/ashish15x/",
@@ -13,31 +22,33 @@ const social = {
   phone: "+91 7070128551",
 };
 
+const roles = ["Full-Stack AI Engineer", "RAG systems builder", "Next.js + Python", "Product-minded engineer"];
+
 const experiences = [
   {
     company: "Hughes Systique Pvt. Ltd.",
     role: "Fullstack AI Engineer",
     date: "January 2024 – Present",
     location: "Gurugram, Haryana",
- bullets: [
-  "Built full-stack apps with Next.js, React, Node.js, and PostgreSQL for scalable SaaS workflows.",
-  "Deployed GenAI RAG pipelines for semantic search, improving retrieval efficiency.",
-  "Optimized RESTful APIs and backend services to significantly reduce response latency.",
-  "Developed responsive Next.js/React frontends with SSR to improve user engagement and reduce manual effort.",
-  "Engineered embedding pipelines and cosine similarity ranking for high-accuracy semantic search.",
-  "Awarded Best Presenter and Innovation Catalyst at the company hackathon for AI-driven solutions."
-],
+    bullets: [
+      "Built full-stack apps with Next.js, React, Node.js, and PostgreSQL for scalable SaaS workflows.",
+      "Deployed GenAI RAG pipelines for semantic search, improving retrieval efficiency.",
+      "Optimized RESTful APIs and backend services to significantly reduce response latency.",
+      "Developed responsive Next.js/React frontends with SSR to improve user engagement and reduce manual effort.",
+      "Engineered embedding pipelines and cosine similarity ranking for high-accuracy semantic search.",
+      "Awarded Best Presenter and Innovation Catalyst at the company hackathon for AI-driven solutions.",
+    ],
   },
   {
     company: "HighRadius",
     role: "Product and Engineering Intern",
     date: "May 2023 – June 2023",
     location: "Bhubaneswar, Odisha",
-   bullets: [
-  "Designed features for a B2B AI-enabled Fintech platform, successfully delivering all tasks within sprint timelines.",
-  "Built machine learning pipelines on financial records for automated payment prediction.",
-  "Translated product requirements into scalable React components and REST APIs to accelerate feature delivery."
-],
+    bullets: [
+      "Designed features for a B2B AI-enabled Fintech platform, successfully delivering all tasks within sprint timelines.",
+      "Built machine learning pipelines on financial records for automated payment prediction.",
+      "Translated product requirements into scalable React components and REST APIs to accelerate feature delivery.",
+    ],
   },
 ];
 
@@ -49,329 +60,500 @@ const projects = [
     githubLink: "https://github.com/ashish15x/ArchSync",
     desc: "AI-driven platform to capture and analyze team architectural knowledge using LLM embeddings and vector search, reducing misalignment by 30%. Implemented semantic search and consensus analysis using Google Gemini embeddings (768-dim), pgvector, and cosine similarity, processing 1,000+ queries with real-time insights. Developed full-stack system using Next.js, TypeScript, Tailwind CSS, and Supabase PostgreSQL; won internal company hackathon among 10 teams.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "Google Gemini", "pgvector"],
+    accent: "from-[#fde8e1] to-[#fff8f0]",
   },
   {
     title: "Sneakhub",
     date: "March 2024 – April 2024",
     desc: "Full-stack e-commerce web application with responsive React.js frontend, achieving a 90+ Lighthouse performance score. Constructed robust RESTful backend APIs using Spring Boot for reliable data handling. Managed efficient SQL database operations, maintaining data integrity and optimizing retrieval. Integrated core e-commerce functionalities, including product browsing, cart, and order processing.",
     tags: ["React.js", "Spring Boot", "SQL", "RESTful APIs"],
+    accent: "from-[#dff3ec] to-[#fff8f0]",
   },
   {
     title: "AI Enabled Fintech B2B Invoice Management Application",
     date: "May 2023 – June 2023",
     desc: "Architected and implemented a full-stack AI-enabled Fintech B2B Invoice Management application using machine learning models to accurately predict order amounts, improving forecasting capabilities for business transactions. Made robust backend using Java and SQL for data management, handling 10,000+ invoice records.",
     tags: ["ML", "Java", "SQL", "React"],
+    accent: "from-[#e4f0fb] to-[#fff8f0]",
   },
 ];
 
-export default function Portfolio() {
-  const [dark, setDark] = useState(() => {
-    // Check localStorage first, then system preference
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('darkMode');
-      if (saved !== null) return saved === 'true';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const skillGroups = [
+  {
+    title: "Languages",
+    items: ["Python", "Java", "TypeScript", "JavaScript", "C++", "SQL"],
+    tone: "bg-[#fde8e1]",
+  },
+  {
+    title: "Frameworks & tools",
+    items: ["Next.js", "React.js", "Vue.js", "Node.js", "Express.js", "Spring Boot", "PostgreSQL", "MongoDB", "Kafka", "Tailwind CSS", "Docker", "Git"],
+    tone: "bg-[#dff3ec]",
+  },
+  {
+    title: "Cloud & AI",
+    items: ["AWS", "GCP", "Kubernetes", "LLMs", "RAG", "LangChain", "LangGraph", "LlamaIndex", "Vector DBs", "Embeddings"],
+    tone: "bg-[#e4f0fb]",
+  },
+];
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    // Save to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('darkMode', dark.toString());
-    }
-  }, [dark]);
+const marqueeItems = [
+  "Next.js", "Python", "RAG", "PostgreSQL", "LangChain", "TypeScript", "AWS", "Docker", "pgvector", "React", "Node.js", "Gemini",
+];
+
+const navItems = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#experience", label: "Experience" },
+  { href: "#projects", label: "Projects" },
+  { href: "#contact", label: "Contact" },
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
+
+function Magnetic({ children, className = "" }) {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 180, damping: 14 });
+  const springY = useSpring(y, { stiffness: 180, damping: 14 });
+
+  const onMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    x.set((e.clientX - rect.left - rect.width / 2) * 0.28);
+    y.set((e.clientY - rect.top - rect.height / 2) * 0.28);
+  };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans">
-      <header className="sticky top-0 z-50 w-full bg-white/90 dark:bg-gray-950/90 backdrop-blur-sm shadow-sm transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">AK</div>
-            <h1 className="text-xl font-bold tracking-tight">Ashish Kumar</h1>
-          </div>
+    <motion.div
+      ref={ref}
+      style={{ x: springX, y: springY }}
+      onMouseMove={onMove}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="#about" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">About</a>
-            <a href="#experience" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">Experience</a>
-            <a href="#projects" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">Projects</a>
-            <a href="#contact" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-base font-medium">Contact</a>
+function SectionLabel({ index, children }) {
+  return (
+    <div className="mb-5 flex items-center gap-3 text-sm tracking-[0.22em] uppercase text-[#8a7468]">
+      <span className="font-semibold text-[#e25c3b]">{index}</span>
+      <span className="h-px w-10 bg-[#e25c3b]/50" />
+      {children}
+    </div>
+  );
+}
 
-           
-          </nav>
+export default function Portfolio() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [cursor, setCursor] = useState({ x: 0, y: 0 });
+  const [hovering, setHovering] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24 });
+  const blobY = useTransform(scrollYProgress, [0, 1], [0, 180]);
 
-          <div className="md:hidden flex items-center gap-3">
-      
-            <button
-              onClick={() => setMobileMenuOpen((s) => !s)}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Open mobile menu"
-            >
-              <FiMenu size={20} />
-            </button>
+  useEffect(() => {
+    const id = setInterval(() => setRoleIndex((i) => (i + 1) % roles.length), 2600);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const close = () => setMenuOpen(false);
+    window.addEventListener("hashchange", close);
+    return () => window.removeEventListener("hashchange", close);
+  }, []);
+
+  useEffect(() => {
+    const move = (e) => setCursor({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", move);
+    return () => window.removeEventListener("mousemove", move);
+  }, []);
+
+  useEffect(() => {
+    const nodes = document.querySelectorAll("a, button, input, textarea");
+    const on = () => setHovering(true);
+    const off = () => setHovering(false);
+    nodes.forEach((n) => {
+      n.addEventListener("mouseenter", on);
+      n.addEventListener("mouseleave", off);
+    });
+    return () => {
+      nodes.forEach((n) => {
+        n.removeEventListener("mouseenter", on);
+        n.removeEventListener("mouseleave", off);
+      });
+    };
+  }, [menuOpen]);
+
+  const doubledMarquee = useMemo(() => [...marqueeItems, ...marqueeItems], []);
+
+  return (
+    <div className="mesh relative min-h-screen font-sans text-ink">
+      <div className="grain" />
+      <motion.div className="fixed top-0 left-0 right-0 z-[70] h-[3px] origin-left bg-gradient-to-r from-[#e25c3b] via-[#e0a03a] to-[#2f8a78]" style={{ scaleX: progress }} />
+
+      <motion.div
+        className="cursor-dot pointer-events-none fixed z-[80] hidden md:block h-2.5 w-2.5 rounded-full bg-[#e25c3b]"
+        animate={{ x: cursor.x - 5, y: cursor.y - 5 }}
+        transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.2 }}
+      />
+      <motion.div
+        className="cursor-ring pointer-events-none fixed z-[80] hidden md:block rounded-full border border-[#e25c3b]/70"
+        animate={{
+          x: cursor.x - (hovering ? 22 : 16),
+          y: cursor.y - (hovering ? 22 : 16),
+          width: hovering ? 44 : 32,
+          height: hovering ? 44 : 32,
+        }}
+        transition={{ type: "spring", stiffness: 220, damping: 22 }}
+      />
+
+      <motion.div style={{ y: blobY }} className="pointer-events-none absolute -top-24 -left-16 h-72 w-72 blob bg-[#fde8e1] blur-2xl opacity-80" />
+      <div className="pointer-events-none absolute top-40 right-[-80px] h-80 w-80 blob bg-[#dff3ec] blur-2xl opacity-70 float-slow" />
+
+      <header className="sticky top-0 z-50">
+        <div className="mx-auto mt-3 max-w-6xl px-4">
+          <div className="flex items-center justify-between rounded-full border border-white/70 bg-white/70 px-4 py-2.5 shadow-[0_10px_40px_rgba(44,34,28,0.06)] backdrop-blur-xl">
+            <a href="#top" className="flex items-center gap-2.5">
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-[#2c221c] text-sm font-semibold text-[#fff8f0]">AK</span>
+              <span className="font-display text-lg font-semibold tracking-tight">Ashish Kumar</span>
+            </a>
+            <nav className="hidden items-center gap-1 md:flex">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-full px-3.5 py-2 text-sm font-medium text-[#6d5f56] transition hover:bg-[#fff1e8] hover:text-[#2c221c]"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <div className="flex items-center gap-2">
+              <Magnetic>
+                <a
+                  href="#contact"
+                  className="hidden rounded-full bg-[#e25c3b] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#cc4d2f] sm:inline-flex"
+                >
+                  Let’s talk
+                </a>
+              </Magnetic>
+              <button
+                className="grid h-10 w-10 place-items-center rounded-full bg-[#fff1e8] text-[#2c221c] md:hidden"
+                onClick={() => setMenuOpen((s) => !s)}
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <FiX size={18} /> : <FiMenu size={18} />}
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Navigation */}
-      <motion.nav
-        initial={false}
-        animate={mobileMenuOpen ? "open" : "closed"}
-        variants={{
-          open: { opacity: 1, height: "auto" },
-          closed: { opacity: 0, height: 0 },
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="md:hidden bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 overflow-hidden shadow-md fixed w-full top-[68px] z-50"
-      >
-        <div className="flex flex-col items-start px-6 py-4 space-y-4">
-          <a href="#about" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-lg font-medium w-full" onClick={() => setMobileMenuOpen(false)}>About</a>
-          <a href="#experience" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-lg font-medium w-full" onClick={() => setMobileMenuOpen(false)}>Experience</a>
-          <a href="#projects" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-lg font-medium w-full" onClick={() => setMobileMenuOpen(false)}>Projects</a>
-          <a href="#contact" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-lg font-medium w-full" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-        </div>
-      </motion.nav>
-
-      <main className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* HERO */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-20 lg:py-28">
+      <AnimatePresence>
+        {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center md:text-left order-2 md:order-1"
+            exit={{ opacity: 0, y: -8 }}
+            className="fixed inset-x-4 top-[76px] z-50 rounded-3xl border border-white/80 bg-white/90 p-5 shadow-xl backdrop-blur-xl md:hidden"
           >
-            <h2 className="text-5xl lg:text-7xl font-extrabold leading-tight text-gray-900 dark:text-gray-100 mb-4">
-              Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Ashish Kumar</span>.
-            </h2>
-            <p className="text-lg lg:text-xl text-gray-700 dark:text-gray-300 max-w-xl mx-auto md:mx-0 leading-relaxed">
-Full-Stack AI Engineer specializing in scalable web apps and AI-powered systems. I build production-ready products using Next.js, Python, PostgreSQL, and modern cloud technologies—leveraging RAG and LLMs to create intelligent automation. Let’s connect!
-            </p>
-
-            <div className="mt-10 flex flex-wrap justify-center md:justify-start gap-4">
-              <a
-                href={social.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md font-medium"
-              >
-                <FiLinkedin size={20} /> LinkedIn
-              </a>
-
-              <a
-                href={social.github}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md font-medium"
-              >
-                <FiGithub size={20} /> GitHub
-              </a>
-
-              {/* <a
-                href={social.leetcode}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm hover:shadow-md font-medium"
-              >
-                LeetCode
-              </a> */}
+            <div className="flex flex-col gap-2">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-2xl px-3 py-3 text-lg font-medium hover:bg-[#fff1e8]"
+                >
+                  {item.label}
+                </a>
+              ))}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-6 text-base text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <FiMail size={18} /> <a href={`mailto:${social.email}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{social.email}</a>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiPhone size={18} /> <a href={`tel:${social.phone}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{social.phone}</a>
-              </div>
-            </div>
+      <main id="top" className="relative z-10 mx-auto max-w-6xl px-4 pb-8">
+        <section className="grid items-center gap-12 py-16 md:grid-cols-[1.15fr_0.85fr] lg:py-24">
+          <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.12 } } }}>
+            <motion.div variants={fadeUp} className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#e25c3b]/20 bg-white/70 px-3 py-1.5 text-sm text-[#6d5f56] shadow-sm">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2f8a78] opacity-60" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#2f8a78]" />
+              </span>
+              Open to thoughtful collaborations
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} className="font-display text-5xl leading-[1.05] font-semibold tracking-tight text-[#2c221c] sm:text-6xl lg:text-7xl">
+              Building calm,
+              <br />
+              intelligent products
+              <br />
+              that actually ship.
+            </motion.h1>
+
+            <motion.div variants={fadeUp} className="mt-5 h-8 overflow-hidden text-lg text-[#e25c3b] sm:text-xl">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={roles[roleIndex]}
+                  initial={{ y: 18, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -18, opacity: 0 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  {roles[roleIndex]}
+                </motion.p>
+              </AnimatePresence>
+            </motion.div>
+
+            <motion.p variants={fadeUp} className="mt-5 max-w-xl text-lg leading-relaxed text-[#6d5f56]">
+              Full-Stack AI Engineer specializing in scalable web apps and AI-powered systems. I build production-ready products using Next.js, Python, PostgreSQL, and modern cloud technologies—leveraging RAG and LLMs to create intelligent automation.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
+              <Magnetic>
+                <a href={social.linkedin} target="_blank" rel="noreferrer" className="shine inline-flex items-center gap-2 rounded-full bg-[#2c221c] px-5 py-3 text-sm font-semibold text-white">
+                  <FiLinkedin /> LinkedIn <FiArrowUpRight />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href={social.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-[#2c221c]/12 bg-white/80 px-5 py-3 text-sm font-semibold text-[#2c221c] shadow-sm">
+                  <FiGithub /> GitHub
+                </a>
+              </Magnetic>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="mt-7 flex flex-wrap gap-5 text-sm text-[#6d5f56]">
+              <a href={`mailto:${social.email}`} className="inline-flex items-center gap-2 hover:text-[#e25c3b]">
+                <FiMail /> {social.email}
+              </a>
+              <a href={`tel:${social.phone}`} className="inline-flex items-center gap-2 hover:text-[#e25c3b]">
+                <FiPhone /> {social.phone}
+              </a>
+            </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="flex justify-center md:justify-end order-1 md:order-2"
+            initial={{ opacity: 0, scale: 0.92, rotate: -3 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto w-full max-w-md"
           >
-            {/* Animated Avatar Placeholder */}
-            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-700 dark:to-purple-800 flex items-center justify-center overflow-hidden shadow-2xl border-4 border-white dark:border-gray-900 md:mr-20">
-              <img src={profileImg} alt="Ashish Kumar Animated Avatar" className="w-full h-full object-cover" />
+            <div className="absolute -inset-6 blob bg-gradient-to-br from-[#fde8e1] via-[#dff3ec] to-[#e4f0fb]" />
+            <div className="relative overflow-hidden rounded-[2.2rem] border-[6px] border-white shadow-[0_30px_80px_rgba(44,34,28,0.12)]">
+              <img src={profileImg} alt="Ashish Kumar" className="h-[420px] w-full object-cover" />
             </div>
+            <motion.div
+              className="absolute -left-6 top-6 rounded-2xl bg-white/90 px-3 py-2 text-sm shadow-lg backdrop-blur"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            >
+              RAG · Vector search
+            </motion.div>
+            <motion.div
+              className="absolute -right-4 bottom-10 rounded-2xl bg-[#2c221c] px-3 py-2 text-sm text-white shadow-lg"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 5, repeat: Infinity }}
+            >
+              Next.js · PostgreSQL
+            </motion.div>
+            <motion.div
+              className="absolute right-8 -top-4 rounded-full bg-[#e0a03a] px-3 py-1.5 text-xs font-semibold text-[#2c221c] shadow"
+              animate={{ rotate: [ -4, 4, -4 ] }}
+              transition={{ duration: 3.4, repeat: Infinity }}
+            >
+              Hackathon winner
+            </motion.div>
           </motion.div>
         </section>
 
-        {/* ABOUT */}
-        <section id="about" className="py-20 lg:py-28 text-gray-700 dark:text-gray-300">
-          <motion.h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            About Me
-          </motion.h3>
-          <motion.p className="text-lg leading-relaxed max-w-4xl mx-auto text-center mb-12"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-           I build full-stack AI solutions that combine robust backends with intuitive, responsive frontends. With 3+ years of experience, my background spans modern web frameworks, scalable APIs, relational databases, and generative AI integrations. In my current work, I develop production-grade applications using Next.js, Python, and PostgreSQL, where I design Retrieval-Augmented Generation (RAG) pipelines using LLMs, embeddings, and vector databases to power intelligent search and automation. Beyond coding, I focus on optimizing performance, ensuring system reliability, and exploring how AI can enhance modern web applications.
-          </motion.p>
+        <div className="-mx-4 mb-8 overflow-hidden border-y border-[#2c221c]/8 bg-white/40 py-4">
+          <div className="marquee-track gap-10 px-4 text-sm font-semibold tracking-[0.18em] uppercase text-[#8a7468]">
+            {doubledMarquee.map((item, i) => (
+              <span key={`${item}-${i}`} className="flex items-center gap-10">
+                {item}
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e25c3b]" />
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <section id="about" className="scroll-mt-28 py-20">
+          <SectionLabel index="01">About</SectionLabel>
+          <motion.h2 variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="font-display max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+            Engineering at the intersection of product, systems, and generative AI.
+          </motion.h2>
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-lg leading-relaxed text-[#6d5f56]"
+            >
+              I build full-stack AI solutions that combine robust backends with intuitive, responsive frontends. With 3+ years of experience, my background spans modern web frameworks, scalable APIs, relational databases, and generative AI integrations. In my current work, I develop production-grade applications using Next.js, Python, and PostgreSQL, where I design Retrieval-Augmented Generation (RAG) pipelines using LLMs, embeddings, and vector databases to power intelligent search and automation. Beyond coding, I focus on optimizing performance, ensuring system reliability, and exploring how AI can enhance modern web applications.
+            </motion.p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                ["3+", "Years building"],
+                ["2", "Product teams"],
+                ["8.93", "CGPA at KIIT"],
+                ["1st", "Hackathon prize"],
+              ].map(([n, l], i) => (
+                <motion.div
+                  key={l}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="rounded-3xl bg-white/80 p-5 shadow-[0_12px_30px_rgba(44,34,28,0.05)]"
+                >
+                  <p className="font-display text-3xl font-semibold text-[#e25c3b]">{n}</p>
+                  <p className="mt-1 text-sm text-[#6d5f56]">{l}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
 
           <motion.div
-            className="bg-gradient-to-br from-indigo-50 dark:from-gray-800 to-purple-50 dark:to-gray-900 rounded-3xl p-10 shadow-xl border border-gray-100 dark:border-gray-800 max-w-2xl mx-auto"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="mt-10 grid gap-4 rounded-[2rem] bg-white/75 p-6 shadow-[0_20px_50px_rgba(44,34,28,0.06)] sm:grid-cols-2"
           >
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Quick Facts</h3>
-            <ul className="grid grid-cols-1 gap-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-  <li className="flex items-start">
-    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Education:</strong>
-    <span>Bachelor Of Engineering in Computer Science, Kalinga Institute Of Industrial Technology (2020–2024) — CGPA 8.93</span>
-  </li>
-  <li className="flex items-start">
-    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Languages:</strong>
-    <span>C++, Java, Python,TypeScript, JavaScript, SQL</span>
-  </li>
-  <li className="flex items-start">
-    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Tech Stack:</strong>
-    <span>Next.js, React.js, Vue.js, Node.js, Spring Boot, PostgreSQL, MongoDB, AWS, GCP, Docker, Kubernetes</span>
-  </li>
-  <li className="flex items-start">
-    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">AI & LLM:</strong>
-    <span>RAG, LLMs, Guardrails, LangChain, LangGraph, LlamaIndex, Vector Databases, Prompt Engineering, Embeddings</span>
-  </li>
-  <li className="flex items-start">
-    <strong className="w-30 text-gray-800 dark:text-gray-200 flex-shrink-0">Certifications:</strong>
-    <span>Google Cloud Digital Leader Certification; AWS Academy Certification</span>
-  </li>
-</ul>
-
+            {[
+              ["Education", "B.E. Computer Science, KIIT (2020–2024) — CGPA 8.93"],
+              ["Languages", "C++, Java, Python, TypeScript, JavaScript, SQL"],
+              ["Tech stack", "Next.js, React.js, Vue.js, Node.js, Spring Boot, PostgreSQL, MongoDB, AWS, GCP, Docker, Kubernetes"],
+              ["AI & LLM", "RAG, LLMs, Guardrails, LangChain, LangGraph, LlamaIndex, Vector Databases, Prompt Engineering, Embeddings"],
+            ].map(([k, v]) => (
+              <div key={k} className="rounded-2xl bg-[#fff8f0] p-4">
+                <p className="text-xs uppercase tracking-[0.16em] text-[#e25c3b]">{k}</p>
+                <p className="mt-2 text-[#2c221c]">{v}</p>
+              </div>
+            ))}
           </motion.div>
         </section>
 
-        {/* SKILLS */}
-        <section id="skills" className="py-20 lg:py-28 bg-gray-50 dark:bg-gray-900 rounded-3xl p-10 lg:p-16 shadow-xl border border-gray-100 dark:border-gray-800">
-          <h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 text-center">My Expertise</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Languages</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Python, Java, TypeScript, JavaScript, C++, SQL</p>
-            </motion.div>
-            <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Frameworks & Tools</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Next.js, React.js, Vue.js, Node.js, Express.js, Spring Boot, PostgreSQL, MongoDB, Kafka, Tailwind CSS, RESTful APIs, Docker, Git</p>
-            </motion.div>
-            <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-3">Cloud & AI</h4>
-              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">AWS, GCP, Kubernetes, LLMs, RAG, LangChain, LangGraph, LlamaIndex, Vector Databases, Guardrails, Embeddings, Semantic Search</p>
-            </motion.div>
+        <section id="skills" className="scroll-mt-28 py-16">
+          <SectionLabel index="02">Expertise</SectionLabel>
+          <h2 className="font-display mb-10 text-4xl font-semibold tracking-tight sm:text-5xl">A toolkit for shipping AI products.</h2>
+          <div className="grid gap-5 md:grid-cols-3">
+            {skillGroups.map((group, i) => (
+              <motion.div
+                key={group.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
+                className={`${group.tone} shine rounded-[2rem] p-7 shadow-[0_16px_40px_rgba(44,34,28,0.06)]`}
+              >
+                <h3 className="font-display text-2xl font-semibold">{group.title}</h3>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <span key={item} className="rounded-full bg-white/70 px-3 py-1.5 text-sm text-[#2c221c]">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
-        {/* PROJECTS */}
-        <section id="projects" className="py-20 lg:py-28">
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-12">
-            <motion.h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 text-center sm:text-left"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              Featured Projects
-            </motion.h3>
-            <motion.a
-              href={social.github}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 sm:mt-0 text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-2 text-lg font-medium"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              View all projects <FiGithub size={20} />
-            </motion.a>
+        <section id="experience" className="scroll-mt-28 py-16">
+          <SectionLabel index="03">Experience</SectionLabel>
+          <h2 className="font-display mb-12 text-4xl font-semibold tracking-tight sm:text-5xl">Where the work happened.</h2>
+          <div className="relative space-y-8 before:absolute before:top-3 before:bottom-3 before:left-[11px] before:w-px before:bg-gradient-to-b before:from-[#e25c3b] before:to-[#2f8a78] md:before:left-[15px]">
+            {experiences.map((exp, index) => (
+              <motion.article
+                key={exp.company}
+                initial={{ opacity: 0, x: -18 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.12 }}
+                className="relative pl-10 md:pl-12"
+              >
+                <span className="absolute left-0 top-3 h-6 w-6 rounded-full border-4 border-white bg-[#e25c3b] shadow" />
+                <div className="rounded-[1.8rem] bg-white/80 p-7 shadow-[0_16px_40px_rgba(44,34,28,0.06)]">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h3 className="font-display text-2xl font-semibold">{exp.role}</h3>
+                      <p className="text-[#e25c3b]">{exp.company}</p>
+                      <p className="mt-1 inline-flex items-center gap-1 text-sm text-[#6d5f56]">
+                        <FiMapPin /> {exp.location}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-[#fff1e8] px-3 py-1 text-sm text-[#6d5f56]">{exp.date}</span>
+                  </div>
+                  <ul className="mt-5 space-y-2.5 text-[#6d5f56]">
+                    {exp.bullets.map((b) => (
+                      <li key={b} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-[#2f8a78]" />
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.article>
+            ))}
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section id="projects" className="scroll-mt-28 py-16">
+          <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <SectionLabel index="04">Selected work</SectionLabel>
+              <h2 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">Projects with a pulse.</h2>
+            </div>
+            <a href={social.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[#e25c3b]">
+              All on GitHub <FiGithub />
+            </a>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-2">
             {projects.map((p, index) => (
               <motion.article
                 key={p.title}
-                className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-full"
-                whileHover={{ y: -8, scale: 1.02 }}
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                whileHover={{ y: -6 }}
+                transition={{ delay: index * 0.08 }}
+                className={`shine rounded-[2rem] bg-gradient-to-br ${p.accent} p-7 shadow-[0_18px_45px_rgba(44,34,28,0.07)] ${index === 0 ? "lg:col-span-2" : ""}`}
               >
-                <div className="flex flex-col items-start mb-4 flex-grow">
-                  <div className="flex justify-between items-start w-full">
-                    <div>
-                      <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100 mb-2">{p.title}</h4>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{p.date}</span>
-                    </div>
-                    <div className="flex gap-2">
-                      {p.githubLink && (
-                        <a
-                          href={p.githubLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                          aria-label="GitHub Repository"
-                        >
-                          <FiGithub size={18} />
-                        </a>
-                      )}
-                      {p.link && (
-                        <a
-                          href={p.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-                          aria-label="Live Project"
-                        >
-                          <FiExternalLink size={18} />
-                        </a>
-                      )}
-                    </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm text-[#8a7468]">{p.date}</p>
+                    <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl">{p.title}</h3>
+                  </div>
+                  <div className="flex gap-2">
+                    {p.githubLink && (
+                      <a href={p.githubLink} target="_blank" rel="noreferrer" className="grid h-10 w-10 place-items-center rounded-full bg-white/80" aria-label="GitHub">
+                        <FiGithub />
+                      </a>
+                    )}
+                    {p.link && (
+                      <a href={p.link} target="_blank" rel="noreferrer" className="grid h-10 w-10 place-items-center rounded-full bg-[#2c221c] text-white" aria-label="Live project">
+                        <FiExternalLink />
+                      </a>
+                    )}
                   </div>
                 </div>
-                <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6 flex-grow">{p.desc}</p>
-                <div className="mt-auto flex flex-wrap gap-2">
+                <p className={`mt-4 leading-relaxed text-[#6d5f56] ${index === 0 ? "max-w-3xl" : ""}`}>{p.desc}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
                   {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-xs font-semibold px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full"
-                    >
+                    <span key={t} className="rounded-full bg-white/80 px-3 py-1 text-xs font-semibold">
                       {t}
                     </span>
                   ))}
@@ -381,164 +563,105 @@ Full-Stack AI Engineer specializing in scalable web apps and AI-powered systems.
           </div>
         </section>
 
-        {/* EXPERIENCE */}
-        <section id="experience" className="py-20 lg:py-28 bg-gray-50 dark:bg-gray-900 rounded-3xl p-10 lg:p-16 shadow-xl border border-gray-100 dark:border-gray-800">
-          <motion.h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 text-center"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            Work Experience
-          </motion.h3>
-          <div className="space-y-10">
-            {experiences.map((exp, index) => (
-              <motion.div
-                key={exp.company + index}
-                className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300"
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+        <section id="certifications" className="scroll-mt-28 py-16">
+          <SectionLabel index="05">Credentials</SectionLabel>
+          <h2 className="font-display mb-10 text-4xl font-semibold tracking-tight sm:text-5xl">Certifications</h2>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {[
+              {
+                title: "Google Cloud Digital Leader Certification",
+                date: "May 2024 – June 2024",
+                href: "https://drive.google.com/file/d/1SDxkXgPB5hisN_bCIzsLCSK7ckw6Y2vS/view?usp=sharing",
+                logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg",
+                tone: "bg-[#e4f0fb]",
+              },
+              {
+                title: "AWS Academy Certification",
+                date: "April 2023 – May 2023",
+                href: "https://drive.google.com/file/d/1kQSfnep12pAziJgpYvoRb5S1CBidZxP8/view?usp=sharing",
+                logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg",
+                tone: "bg-[#fff1e8]",
+              },
+            ].map((c, i) => (
+              <motion.a
+                key={c.title}
+                href={c.href}
+                target="_blank"
+                rel="noreferrer"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                whileHover={{ y: -6, rotate: i === 0 ? -1 : 1 }}
+                className={`${c.tone} flex items-center gap-5 rounded-[1.8rem] p-6 shadow-[0_16px_40px_rgba(44,34,28,0.06)]`}
               >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-                  <div>
-                    <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">{exp.role}</h4>
-                    <p className="text-md text-gray-600 dark:text-gray-400">{exp.company}</p>
-                    {exp.location && <p className="text-sm text-gray-500 dark:text-gray-500">{exp.location}</p>}
-                  </div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">{exp.date}</span>
+                <img src={c.logo} alt="" className="h-14 w-14" />
+                <div>
+                  <h3 className="font-display text-xl font-semibold">{c.title}</h3>
+                  <p className="mt-1 text-sm text-[#6d5f56]">{c.date}</p>
+                  <p className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[#e25c3b]">
+                    <FiAward /> View certificate
+                  </p>
                 </div>
-                <ul className="list-disc list-inside text-base text-gray-700 dark:text-gray-300 space-y-2 marker:text-indigo-600 dark:marker:text-indigo-400">
-                  {exp.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </section>
 
-        {/* CERTIFICATIONS */}
-        <section id="certifications" className="py-20 lg:py-28">
-          <motion.h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 text-center"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            Certifications
-          </motion.h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section id="contact" className="scroll-mt-28 py-16">
+          <SectionLabel index="06">Contact</SectionLabel>
+          <h2 className="font-display mb-10 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">Let’s make something quietly excellent.</h2>
+          <div className="grid gap-6 md:grid-cols-2">
             <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              className="rounded-[2rem] bg-[#2c221c] p-8 text-[#fff8f0]"
             >
-              <img src="https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg" alt="Google Cloud" className="w-16 h-16 mb-4" />
-              <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">Google Cloud Digital Leader Certification</h4>
-              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: May 2024 – June 2024</p>
-              <a
-                href="https://drive.google.com/file/d/1SDxkXgPB5hisN_bCIzsLCSK7ckw6Y2vS/view?usp=sharing"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
-              >
-                <FiAward size={16} /> View Certificate
-              </a>
-            </motion.div>
-            <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <img src="https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg" alt="AWS" className="w-16 h-16 mb-4" />
-              <h4 className="font-bold text-xl text-gray-900 dark:text-gray-100">AWS Academy Certification</h4>
-              <p className="text-base text-gray-600 dark:text-gray-400 mt-2">Issued: April 2023 – May 2023</p>
-              <a
-                href="https://drive.google.com/file/d/1kQSfnep12pAziJgpYvoRb5S1CBidZxP8/view?usp=sharing"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors font-medium"
-              >
-                <FiAward size={16} /> View Certificate
-              </a>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* CONTACT */}
-        <section id="contact" className="py-20 lg:py-28 bg-gray-50 dark:bg-gray-900 rounded-3xl p-10 lg:p-16 shadow-xl border border-gray-100 dark:border-gray-800">
-          <motion.h3 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 text-center"
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            Get in touch
-          </motion.h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <motion.div
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md flex flex-col justify-between h-full"
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div>
-                <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-4">Contact Information</h4>
-                <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">Feel free to reach out to me through email or phone. I'm always open to new opportunities and collaborations!</p>
-                <p className="mt-6 text-lg">Email: <a className="text-indigo-600 dark:text-indigo-400 hover:underline transition-colors" href={`mailto:${social.email}`}>{social.email}</a></p>
-                <p className="mt-2 text-lg">Phone: <a className="text-indigo-600 dark:text-indigo-400 hover:underline transition-colors" href={`tel:${social.phone}`}>{social.phone}</a></p>
+              <p className="text-lg leading-relaxed text-[#efe4d8]">
+                Feel free to reach out through email or phone. I’m always open to new opportunities and collaborations.
+              </p>
+              <div className="mt-8 space-y-3">
+                <a href={`mailto:${social.email}`} className="block text-xl hover:text-[#e0a03a]">{social.email}</a>
+                <a href={`tel:${social.phone}`} className="block text-xl hover:text-[#e0a03a]">{social.phone}</a>
               </div>
-              <div className="mt-8 flex gap-5">
-                <a href={social.github} target="_blank" rel="noreferrer" aria-label="GitHub" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><FiGithub size={28} /></a>
-                <a href={social.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><FiLinkedin size={28} /></a>
-                {/* <a href={social.leetcode} target="_blank" rel="noreferrer" aria-label="LeetCode" className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">LC</a> */}
+              <div className="mt-10 flex gap-3">
+                <a href={social.github} target="_blank" rel="noreferrer" className="grid h-12 w-12 place-items-center rounded-full bg-white/10">
+                  <FiGithub size={22} />
+                </a>
+                <a href={social.linkedin} target="_blank" rel="noreferrer" className="grid h-12 w-12 place-items-center rounded-full bg-white/10">
+                  <FiLinkedin size={22} />
+                </a>
               </div>
             </motion.div>
 
             <motion.form
-              className="p-8 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 shadow-md flex flex-col gap-6 h-full"
-              action="https://formspree.io/f/myzdayrz" // Replace 'your_form_id' with your actual Formspree form ID
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col gap-4 rounded-[2rem] bg-white/80 p-8 shadow-[0_18px_45px_rgba(44,34,28,0.07)]"
+              action="https://formspree.io/f/myzdayrz"
               method="POST"
             >
-              <h4 className="font-bold text-2xl text-gray-900 dark:text-gray-100 mb-2">Send a Message</h4>
-              <input
-                className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all w-full"
-                placeholder="Your name" required name="name"
-              />
-              <input
-                className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all w-full"
-                placeholder="Your email" type="email" required name="email"
-              />
-              <textarea
-                className="p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 h-40 resize-y focus:ring-2 focus:ring-indigo-500 outline-none transition-all w-full"
-                placeholder="Your message" required name="message"
-              />
-              <button
-                className="mt-4 px-8 py-4 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors shadow-md text-lg w-full"
-                type="submit"
-              >
-                Send Message
-              </button>
+              <input className="rounded-2xl border border-[#2c221c]/10 bg-[#fff8f0] p-4 outline-none transition focus:border-[#e25c3b]" placeholder="Your name" required name="name" />
+              <input className="rounded-2xl border border-[#2c221c]/10 bg-[#fff8f0] p-4 outline-none transition focus:border-[#e25c3b]" placeholder="Your email" type="email" required name="email" />
+              <textarea className="h-36 resize-y rounded-2xl border border-[#2c221c]/10 bg-[#fff8f0] p-4 outline-none transition focus:border-[#e25c3b]" placeholder="Your message" required name="message" />
+              <Magnetic>
+                <button className="w-full rounded-full bg-[#e25c3b] px-6 py-4 text-lg font-semibold text-white transition hover:bg-[#cc4d2f]" type="submit">
+                  Send message
+                </button>
+              </Magnetic>
             </motion.form>
           </div>
         </section>
-
       </main>
 
-      <footer className="mt-20 py-10 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-          <p className="text-center sm:text-left mb-4 sm:mb-0">© {new Date().getFullYear()} Ashish Kumar. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-base">
-            <a href={social.github} target="_blank" rel="noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">GitHub</a>
-            <a href={social.linkedin} target="_blank" rel="noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">LinkedIn</a>
-            <a href={`mailto:${social.email}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Contact</a>
+      <footer className="relative z-10 mt-8 border-t border-[#2c221c]/8 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-[#6d5f56] sm:flex-row">
+          <p>© {new Date().getFullYear()} Ashish Kumar. Crafted with a little extra motion.</p>
+          <div className="flex gap-5">
+            <a href={social.github} target="_blank" rel="noreferrer" className="hover:text-[#e25c3b]">GitHub</a>
+            <a href={social.linkedin} target="_blank" rel="noreferrer" className="hover:text-[#e25c3b]">LinkedIn</a>
+            <a href={`mailto:${social.email}`} className="hover:text-[#e25c3b]">Contact</a>
           </div>
         </div>
       </footer>
